@@ -4,7 +4,7 @@ stages:
     if: branch = master AND type = push AND fork = false
 
 before_install:
-  - git clone --depth=1 --branch=master https://github.com/kodeklubben/oppgaver.git ../oppgaver
+  - git clone --depth=1 --branch=master https://github.com/linemos/oppgaver.git ../oppgaver
 cache: yarn
 script:
   - yarn eslint
@@ -17,8 +17,6 @@ deploy:
   skip-cleanup: true
   keep-history: true
   local-dir: dist
-  repo: kodeklubben/kodeklubben.github.io
   target-branch: master
-  fqdn: oppgaver.kidsakoder.no
   on:
     branch: master
