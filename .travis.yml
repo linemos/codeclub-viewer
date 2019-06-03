@@ -18,6 +18,6 @@ deploy:
   keep-history: true
   local-dir: dist
   target-branch: master
-  repo: https://github.com/linemos/kodeklubben-oppgaver
+  repo: linemos/kodeklubben-oppgaver
   on:
     branch: master
