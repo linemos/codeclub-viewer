@@ -1,3 +1,5 @@
+import {getAvailableLanguages} from './filterUtils';
+
 // Structure of replaceTags:
 // {
 //   <oldtag>: {
@@ -115,16 +117,23 @@ const replaceClassRecursively = (obj, styles) => {
  * @returns {string} <pre class="blocks">...</pre> replaced with SVG
  */
 const renderScratchBlocks = (content, styles) => {
-  const scratchblocks = require('scratchblocks/browser/scratchblocks.js');
-
+  const scratchblocks = require('scratchblocks/browser.js');
+  require('scratchblocks/locales-src/translations-all.js');
   let replace = [];
   if ('blocks' in styles) {
-    replace.push({start: '<pre class="' + styles.blocks + '">', end: '</pre>'});
+    replace.push({
+      start: '<pre class="' + styles.blocks + '">',
+      end: '</pre>',
+      options: {languages: getAvailableLanguages()}
+    });
   }
   if ('b' in styles) {
-    replace.push({start: '<code class="' + styles.b + '">', end: '</code>', options: {inline: true}});
+    replace.push({
+      start: '<code class="' + styles.b + '">',
+      end: '</code>',
+      options: {inline: true, languages: getAvailableLanguages()}
+    });
   }
-
   let returnContent = content;
   replace.forEach(r => {
     const re = new RegExp(r.start + '[\\s\\S]*?' + r.end, 'g');
@@ -133,12 +142,15 @@ const renderScratchBlocks = (content, styles) => {
     if (blocks) {
       blocks.forEach(block => {
         let code = block.substring(r.start.length, block.length - r.end.length);
-        let SVG = scratchblocks(code, r.options);
-        returnContent = returnContent.replace(block, SVG);
+        let doc = scratchblocks.parse(code, r.options);
+        let docView = scratchblocks.newView(doc, {style: 'scratch3'});
+        let svg = docView.render();
+        svg.style.transform = 'scale(0.7)';
+        svg.style.transformOrigin = '0 0';
+        returnContent = returnContent.replace(block, svg.outerHTML);
       });
     }
   });
-
   return returnContent;
 };
 
